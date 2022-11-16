@@ -2,3 +2,6 @@ setup.py
 .ipynb_*
 *.ipynb
 tokens
+*.log
+__pycache__
+*.json
