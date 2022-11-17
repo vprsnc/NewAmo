@@ -13,21 +13,6 @@ logger.add(
 )
 
 
-Logon_data = namedtuple(
-    'Logon_data',
-    ['client_secret', 'client_id', 'subdomain', 'redirect_uri']
-)
-
-
-# Temporary @TODO: delete me!
-
-franchize = Logon_data(
-    client_secret='fy7dA4ouR4uLcW98JHb2EadFJwYYvKb0mXauxtN9A0POFKsJCJNoh0puPALc2qNn',
-    client_id='6a15b109-a8b4-4345-ba0d-249544d84acb',
-    subdomain='yastaff',
-    redirect_uri='https://yastaff.amocrm.ru/amo'
-)
-
 def read_token(tokens_folder, token_type):
     try:
         access_token = Path(f"./{tokens_folder}/{token_type}_token.txt").read_text()
@@ -100,5 +85,3 @@ def build_header(logon_data, tokens_folder, code=None):
     else:
         get_token(logon_data, tokens_folder, code)
         return build_header(logon_data, tokens_folder)
-
-
