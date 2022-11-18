@@ -4,12 +4,15 @@ from time import sleep
 
 from collections import namedtuple
 from pathlib import Path
+from requests.adapters import HTTPAdapter
 
 from loguru import logger
 
+from setup import franchize
+
 
 logger.add(
-    'out.log', backtrace=True, diagnose=True 
+    'out.log', backtrace=True, diagnose=True, level='DEBUG'
 )
 
 
@@ -22,12 +25,14 @@ def read_token(tokens_folder, token_type):
 
 
 def token_is_fresh(header, logon_data):
-    if requests.get(
+    s = requests.Session()
+    s.headers.update(header)
+    if s.get(
         f'https://{logon_data.subdomain}.amocrm.ru/api/v4/account',
         headers=header
     ).status_code == 200:
         sleep(5)
-        return True
+        return s
     else:
         return False
 
@@ -67,21 +72,22 @@ def get_token(logon_data, tokens_folder, code=None):
         logger.critical("You need to provide code/token!")
 
 
-def build_header(logon_data, tokens_folder, code=None):
+def build_session(logon_data, tokens_folder, code=None):
 
     if read_token(tokens_folder, 'access') is not None:
         logger.info('Token discoverd, checking if it is fresh...')
         header = {'Authorization': 'Bearer ' + read_token(tokens_folder, 'access')}
-
-        if token_is_fresh(header, logon_data):
-            logger.success('Token is fresh, building the header.')
-            header = {'Authorization': 'Bearer ' + read_token(tokens_folder, 'access')}
-            return header
+        session = token_is_fresh(header, logon_data)
+        if session is not False:
+            logger.success('Token is fresh, building the session.')
+            # header = {'Authorization': 'Bearer ' + read_token(tokens_folder, 'access')}
+            session.mount('https://', HTTPAdapter(max_retries=5))
+            return session
         else:
             logger.info('Token is not fresh, refreshing...')
             get_token(logon_data, tokens_folder)
-            return build_header(logon_data, tokens_folder)
+            return build_session(logon_data, tokens_folder)
 
     else:
         get_token(logon_data, tokens_folder, code)
-        return build_header(logon_data, tokens_folder)
+        return build_session(logon_data, tokens_folder)
