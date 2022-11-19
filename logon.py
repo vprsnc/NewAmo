@@ -50,9 +50,12 @@ def get_token(logon_data, tokens_folder, code=None):
         request = requests.post(new_url, data=login_data._asdict())
         request_dict = json.loads(request.text)
 
-        with open(f'{tokens_folder}/access_token.txt', 'w') as file:
-            file.write(request_dict[f"access_token"])
-        logger.info('New access token stored.')
+        try:
+            with open(f'{tokens_folder}/access_token.txt', 'w') as file:
+                file.write(request_dict[f"access_token"])
+            logger.info('New access token stored.')
+        except KeyError:
+            logger.critical(request_dict['hint'])
 
     elif code:
         logger.info(
