@@ -62,6 +62,7 @@ def write_contents(entity, contents):
               
 def get_entity(entity, logon_data, tokens_folder, filters=None):
 
+    count = 0
     session = build_session(logon_data, tokens_folder) 
     r = request_entities(
          url=build_url(logon_data, entity, filters if filter else None),
@@ -78,6 +79,7 @@ def get_entity(entity, logon_data, tokens_folder, filters=None):
              write_contents(entity, build_contents(r, entity))
              next_url = build_next(r)
         else:
+            logger.success(f'{count} records downloaded')
             break
 
  
