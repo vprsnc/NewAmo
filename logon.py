@@ -11,9 +11,9 @@ from loguru import logger
 from setup import franchize
 
 
-logger.add(
-    'out.log', backtrace=True, diagnose=True, level='DEBUG'
-)
+# logger.add(
+#     'out.log', backtrace=True, diagnose=True, level='DEBUG'
+# )
 
 
 def read_token(tokens_folder, token_type):

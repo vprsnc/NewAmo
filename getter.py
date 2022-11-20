@@ -9,23 +9,12 @@ from loguru import logger
 
 from setup import franchize
 from logon import build_session
+from utilities import timer_decorator
 
 
 logger.add(
      'out.log', backtrace=True, diagnose=True, level='DEBUG'
 )
-
-
-def timer_decorator(func):
-
-     def timer():
-         start = datetime.now()
-         logger.info(f'Starting timer at {start}')
-         func()
-         end = datetime.now()
-         logger.success(f'Ending timer at{end}, it took {end-start}.')
-
-     return timer
 
 
 def build_url(logon_data, entity, filters=None):
@@ -60,41 +49,40 @@ def write_contents(entity, contents):
               file.write(',\n')
 
               
+@timer_decorator
 def get_entity(entity, logon_data, tokens_folder, filters=None):
+
+    entity2 = 'events' if entity == 'lead_status_changes' else entity
 
     count = 0
     session = build_session(logon_data, tokens_folder) 
     r = request_entities(
-         url=build_url(logon_data, entity, filters if filter else None),
+         url=build_url(logon_data, entity2, filters if filter else None),
          session=session
     )
 
-    write_contents(entity, build_contents(r, entity))
+    write_contents(entity2, build_contents(r, entity2))
 
     next_url = build_next(r)
 
     while True:
         if next_url:
              r = request_entities(next_url, session)
-             write_contents(entity, build_contents(r, entity))
+             write_contents(entity, build_contents(r, entity2))
              next_url = build_next(r)
+             count += 50
         else:
-            logger.success(f'{count} records downloaded')
+            logger.success(f'Approx. {count} records downloaded')
+            session.close()
             break
 
  
 if __name__ == '__main__':
     url = f'https://{franchize.subdomain}.amocrm.ru/api/v4/events'
-    filters = '?filter[type]=lead_status_changed,lead_added,lead_deleted,lead_restored&filter[created_at][from]=20220101'
-    entity = 'events'
+    filters = '?filter[type]=lead_status_changed&filter[created_at][from]=1667250000'
+    entity = 'lead_status_changes'
     tokens_folder='tokens/franchize'
 
-    timer_decorator(get_entity(entity, franchize, tokens_folder, filters=filters))
-    # pprint(json.loads(r.text)['_links']['next']['href'])
-
-    # with open('events_tmp.json', 'r', encoding='utf-8') as file:
-    #     # data = list(json.loads(x) for x in file)
-    #     data = json.loads('[' + file.read()[:-2] + ']')
-
-
-    
+    get_entity(entity, franchize, tokens_folder, filters=filters)
+    with open('lead_status_changes_last_date.txt', 'w') as file:
+         file.write(str(datetime.now()))
