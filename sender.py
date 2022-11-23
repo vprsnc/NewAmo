@@ -1,14 +1,13 @@
+import os
 import json
 from builders import *
 from utilities import read_json
 
-from sqlalchemy.engine import create_engine
-from sqlalchemy.schema import *
 
 from pprint import pprint
 
 
-# engine = create_engine('bigquery://')
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = 'tokens/yet-another-python-c9430ad455a2.json'
 
 
 def read_entity(entity):
