@@ -1,4 +1,5 @@
 venv
+nixenv
 setup.py
 .ipynb_*
 *.ipynb

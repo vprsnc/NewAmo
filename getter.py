@@ -1,10 +1,6 @@
-import requests
 import json
 
 from datetime import datetime
-from collections import namedtuple
-
-from pprint import pprint
 from loguru import logger
 
 from setup import franchize
@@ -18,8 +14,8 @@ logger.add(
 
 
 def build_url(logon_data, entity, filters=None):
-     url = f'https://{logon_data.subdomain}.amocrm.ru/api/v4/{entity}'
-     return url + filters if filters else url
+    url = f'https://{logon_data.subdomain}.amocrm.ru/api/v4/{entity}'
+    return url + filters if filters else url
 
 
 def request_entities(url, session):
@@ -27,12 +23,12 @@ def request_entities(url, session):
     if request.status_code == 200:
         return request
     else:
-        logger.critical(f'Something is wrong here!: {r.text}')
+        logger.critical(f'Something is wrong here!: {request.text}')
         return False
 
 
 def build_contents(r, entity):
-     return json.loads(r.text)['_embedded'][f'{entity}']
+    return json.loads(r.text)['_embedded'][f'{entity}']
 
 
 def build_next(r):
@@ -44,11 +40,11 @@ def build_next(r):
 
 def write_contents(entity, contents):
     for c in contents:
-         with open(f'{entity}_tmp.json', 'a', encoding='utf-8') as file:
-              json.dump(c, file, indent=4)
-              file.write(',\n')
+        with open(f'{entity}_tmp.json', 'a', encoding='utf-8') as file:
+            json.dump(c, file, indent=4)
+            file.write(',\n')
 
-              
+
 @timer_decorator
 def get_entity(entity, logon_data, tokens_folder, filters=None):
 
@@ -67,16 +63,16 @@ def get_entity(entity, logon_data, tokens_folder, filters=None):
 
     while True:
         if next_url:
-             r = request_entities(next_url, session)
-             write_contents(entity, build_contents(r, entity2))
-             next_url = build_next(r)
-             count += 50
+            r = request_entities(next_url, session)
+            write_contents(entity, build_contents(r, entity2))
+            next_url = build_next(r)
+            count += 50
         else:
             logger.success(f'Approx. {count} records downloaded')
             session.close()
             break
 
- 
+
 if __name__ == '__main__':
     url = f'https://{franchize.subdomain}.amocrm.ru/api/v4/events'
     filters = '?filter[type]=lead_status_changed&filter[created_at][from]=1667250000'
@@ -85,4 +81,4 @@ if __name__ == '__main__':
 
     get_entity(entity, franchize, tokens_folder, filters=filters)
     with open('lead_status_changes_last_date.txt', 'w') as file:
-         file.write(str(datetime.now()))
+        file.write(str(datetime.now()))
