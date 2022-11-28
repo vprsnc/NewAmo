@@ -2,7 +2,6 @@ import os
 import pandas as pd
 
 from loguru import logger
-from pprint import pprint      #TODO delete it
 from google.cloud import bigquery as bq
 
 from amo.builders import *
@@ -29,11 +28,11 @@ def send_entity(entity, amo):
         library to send JSON to a database."""
     try:
         pd.DataFrame.from_records(
-            [i._asdict() for i in read_entity1]
+            [i._asdict() for i in read_entity(entity)]
         ).to_gbq(
             f"{amo}_oddjob.dw_amocrm_{entity}", if_exists="replace"
         )
         return True
-    except ConnectionAbortedError as Excep:
-        logger.critical(Excep)
+    except ConnectionAbortedError as excep:
+        logger.critical(excep)
         return False
