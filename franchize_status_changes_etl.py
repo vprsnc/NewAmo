@@ -8,7 +8,7 @@ from setup import franchize
 from sender import send_entity
 
 logger.add(
-     'out.log', backtrace=True, diagnose=True, level='DEBUG'
+     'logs/franchize_lead_status_changes.log', backtrace=True, diagnose=True, level='DEBUG'
 )
 
 with open('franchize_lead_status_changes_last_date.txt', 'r') as f:
