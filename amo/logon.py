@@ -24,22 +24,23 @@ def read_token(tokens_folder, token_type):
         return None
 
 
-def token_is_fresh(header, logon_data):
+def token_is_fresh(header, logon_data, tokens_folder):
+    """Function makes a test request to Amo API, if the request status is 200,
+        it returns session, else post a request to refresh the token"""
     s = requests.Session()
     s.headers.update(header)
     if s.get(
         f'https://{logon_data.subdomain}.amocrm.ru/api/v4/account',
         headers=header
     ).status_code == 200:
-        sleep(5)
         return s
-    else:
-        return False
+
+    s.close()
+    return False
 
 
-def get_token(logon_data, tokens_folder, code=None):
+def refresh_token(logon_data, tokens_folder):
     new_url = f'https://{logon_data.subdomain}.amocrm.ru/oauth2/access_token'
-
     if read_token(tokens_folder, 'refresh'):
         logger.info(
             'Refresh token found, using it to get access token...'
@@ -60,7 +61,10 @@ def get_token(logon_data, tokens_folder, code=None):
         request_dict = json.loads(request.text)
 
         try:
-            with open(f'{tokens_folder}/access_token.txt', 'w') as file:
+            with open(
+                    f'{tokens_folder}/access_token.txt',
+                    'w', encoding='utf-8'
+                      ) as file:
                 file.write(request_dict[f"access_token"])
             logger.info('New access token stored.')
 
@@ -71,7 +75,11 @@ def get_token(logon_data, tokens_folder, code=None):
 
             return False
 
-    elif code:
+
+def get_token(logon_data, tokens_folder, code=None):
+    new_url = f'https://{logon_data.subdomain}.amocrm.ru/oauth2/access_token'
+
+    if code:
         logger.info(
             'Authorization code has been passed as an argument, using it to get access token...'
         )
@@ -105,24 +113,23 @@ def build_session(logon_data, tokens_folder, code=None):
         If request is succesfull, session will be returend;
         Else refresh token will be used to generate acess token."""
 
+    if code:
+        get_token(logon_data, tokens_folder, code)
+        return build_session(logon_data, tokens_folder)
+
     if read_token(tokens_folder, 'access') is not None:
         logger.info('Token discoverd, checking if it is fresh...')
-        header = {'Authorization': 'Bearer ' + read_token(tokens_folder, 'access')}
-        session = token_is_fresh(header, logon_data)
+        header = {
+            'Authorization': 'Bearer ' + read_token(tokens_folder, 'access')
+        }
+        session = token_is_fresh(header, logon_data, tokens_folder)
 
-        if session is not False:
+        if session:
             logger.success('Token is fresh, building the session.')
             # header = {'Authorization': 'Bearer ' + read_token(tokens_folder, 'access')}
             session.mount('https://', HTTPAdapter(max_retries=5))
             return session
 
-        logger.info('Token is not fresh, refreshing...')
-
-        if get_token(logon_data, tokens_folder):
+        logger.info("Token is not fresh, refreshing...")
+        if refresh_token(logon_data, tokens_folder):
             return build_session(logon_data, tokens_folder)
-
-            logger.critical("Something wend wrong!")
-
-    else:
-        get_token(logon_data, tokens_folder, code)
-        return build_session(logon_data, tokens_folder)
