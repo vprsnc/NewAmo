@@ -11,16 +11,16 @@ logger.add(
      'out.log', backtrace=True, diagnose=True, level='DEBUG'
 )
 
-with open('lead_status_changes_last_date.txt', 'r') as f:
+with open('franchize_lead_status_changes_last_date.txt', 'r') as f:
     last_date = str(
         datetime.timestamp(parser.parse(f.read()))
-    ).split('.')[0]
+    ).split('.', maxsplit=1)[0]
 
 
 arguments = {
     'entity': "lead_status_changes",
     'tokens_folder':  'tokens/franchize',
-    'filters': f'?filter[type]=lead_status_changed&filter[updated_at][from]={last_date}',
+    'filters': f'?filter[type]=lead_status_changed&filter[created_at][from]={last_date}',
     }
 
 
@@ -30,14 +30,16 @@ if __name__ == "__main__":
         f"Starting {arguments['entity']} ETL process at {datetime.now()}"
     )
 
-    if get_entity(logon_data=franchize, **arguments):
+    try:
+        get_entity(logon_data=franchize, **arguments)
 
-        if send_entity(arguments['entity'], 'franchize', if_exists='append'):
+        try:
+            send_entity(arguments['entity'], 'franchize', if_exists='append')
             logger.success("ETL process finished successfully, cleaning up...")
             open(f"temp_data/{arguments['entity']}_tmp.json", "w").close()
 
-        else:
-            logger.critical("Sedning process failure")
+        except Exception as e:
+            logger.critical(f"Sedning process failure: {e}")
 
-    else:
-        logger.critical("ETL process failure")
+    except Exception as e:
+        logger.critical(f"ETL process failure: {e}")

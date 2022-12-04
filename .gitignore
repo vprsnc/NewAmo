@@ -8,4 +8,5 @@ tokens
 __pycache__
 *.json
 *.nix
+amo/*
 amo
