@@ -1,7 +1,7 @@
 #!/bin/sh
 
 mydate=`date`
-cd $HOME/NewAmo/crons
+cd $HOME/NewAmo
 $HOME/NewAmo/venv/bin/python $HOME/NewAmo/franchize_status_changes_etl.py
 if [ $? -eq 0 ]; then
     echo "leads cron successful on $mydate" >> $HOME/newAmo.log; else
