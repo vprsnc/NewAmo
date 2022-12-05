@@ -8,7 +8,7 @@ from amo.builders import *
 from amo.utilities import read_json
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = \
-    'tokens/oddjob-db-2007-759fe782b144.json'
+    './tokens/oddjob-db-2007-759fe782b144.json'
 client = bq.Client()
 
 
