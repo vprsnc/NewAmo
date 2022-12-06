@@ -13,7 +13,7 @@ logger.add(
      'logs/franchize_lead_status_changes.log', backtrace=True, diagnose=True, level='DEBUG'
 )
 
-with open('franchize_lead_status_changes_last_date.txt', 'r') as f:
+with open('last_date_franchize_lead_status_changes.txt', 'r') as f:
     last_date = str(
         datetime.timestamp(parser.parse(f.read()))
     ).split('.', maxsplit=1)[0]
