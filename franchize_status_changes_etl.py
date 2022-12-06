@@ -38,7 +38,7 @@ if __name__ == "__main__":
 
     try:
         get_entity(
-            franchize, **arguments,
+            **arguments, logon_data=franchize,
             code=(code if code else None)
         )
 
