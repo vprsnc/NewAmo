@@ -1,3 +1,5 @@
+import os
+
 from datetime import datetime
 from dateutil import parser
 
@@ -16,11 +18,15 @@ with open('franchize_lead_status_changes_last_date.txt', 'r') as f:
         datetime.timestamp(parser.parse(f.read()))
     ).split('.', maxsplit=1)[0]
 
+try:
+    code = os.environ["CODE"]
+except KeyError:
+    code = None
 
 arguments = {
     'entity': "lead_status_changes",
     'amo':  'franchize',
-    'filters': f'?filter[type]=lead_status_changed&filter[created_at][from]={last_date}',
+    'filters': f'?filter[type]=lead_status_changed&filter[created_at][from]={last_date}'
     }
 
 
@@ -31,7 +37,10 @@ if __name__ == "__main__":
     )
 
     try:
-        get_entity(logon_data=franchize, **arguments)
+        get_entity(
+            franchize, **arguments,
+            code=(code if code else None)
+        )
 
         try:
             send_entity(arguments['entity'], 'franchize', if_exists='append')
