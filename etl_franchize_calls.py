@@ -25,6 +25,7 @@ except KeyError:
 
 arguments = {
     'entity': "lead_status_changes",
+    'entity_sub_type': "calls" # TODO it's actually incoming and outgoing_calls
     'amo':  'franchize',
     'filters': f'?filter[type]=lead_status_changed&filter[created_at][from]={last_date}'
     }
