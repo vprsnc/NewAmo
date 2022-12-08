@@ -44,7 +44,10 @@ if __name__ == "__main__":
         )
 
         try:
-            send_entity(arguments['entity'], 'franchize', if_exists='append')
+            send_entity(
+                arguments['entity_subtype'],
+                'franchize', if_exists='append'
+            )
             logger.success("ETL process finished successfully, cleaning up...")
             open(f"temp_data/{arguments['entity']}_tmp.json", "w").close()
 
