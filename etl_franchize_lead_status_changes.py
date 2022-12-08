@@ -26,8 +26,8 @@ except KeyError:
 arguments = {
     'entity': "events",
     'amo':  'franchize',
-    'filters': f'?filter[type]=lead_status_changes&filter[created_at][from]={last_date}',
-    'entity_subtype': 'lead_status_changed'
+    'filters': f'?filter[type]=lead_status_changed&filter[created_at][from]={last_date}',
+    'entity_subtype': 'lead_status_changes'
     }
 
 
