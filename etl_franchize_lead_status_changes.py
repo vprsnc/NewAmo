@@ -49,7 +49,7 @@ if __name__ == "__main__":
                 'franchize', if_exists='append'
             )
             logger.success("ETL process finished successfully, cleaning up...")
-            open(f"temp_data/{arguments['entity']}_tmp.json", "w").close()
+            open(f"temp_data/{arguments['entity_subtype']}_tmp.json", "w").close()
 
         except Exception as e:
             logger.critical(f"Sedning process failure: {e}")
