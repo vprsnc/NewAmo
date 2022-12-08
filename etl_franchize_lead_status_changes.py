@@ -24,9 +24,10 @@ except KeyError:
     code = None
 
 arguments = {
-    'entity': "lead_status_changes",
+    'entity': "events",
     'amo':  'franchize',
-    'filters': f'?filter[type]=lead_status_changed&filter[created_at][from]={last_date}'
+    'filters': f'?filter[type]=lead_status_changes&filter[created_at][from]={last_date}',
+    'entity_subtype': 'lead_status_changes'
     }
 
 
