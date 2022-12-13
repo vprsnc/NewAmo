@@ -26,8 +26,7 @@ except KeyError:
 arguments = {
     'entity': "events",
     'amo':  'franchize',
-    # 'filters': f'?filter[type]=incoming_call,outgoing_call&filter[created_at][from]={last_date}',
-    'filters': f'?filter[type]=incoming_call,outgoing_call', #FIXME change back to filter date
+    'filters': f'?filter[type]=incoming_call,outgoing_call&filter[created_at][from]={last_date}',
     'entity_subtype': 'calls'
     }
 
@@ -47,9 +46,7 @@ if __name__ == "__main__":
         try:
             send_entity(
                 arguments['entity_subtype'],
-                'franchize',
-                if_exists='replace' #FIXME change back to append
-                # if_exists='append'
+                'franchize', if_exists='append'
             )
             logger.success("ETL process finished successfully, cleaning up...")
             open(
