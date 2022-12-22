@@ -27,13 +27,13 @@ def read_entity(entity, amo):
     )
 
 
-def send_entity(entity, amo, if_exists):
+def send_entity(entity, amo, records, if_exists):
     """Function uses basic functionality of bigquery python
         library to send JSON to a database.
        If_exists takes following arguments: 'replace', 'append'"""
     try:
         pd.DataFrame.from_records(
-            [i._asdict() for i in read_entity(entity, amo)]
+            [i._asdict() for i in records]
         ).to_gbq(
             f"{amo}_oddjob.dw_amocrm_{entity}", if_exists=if_exists
         )
