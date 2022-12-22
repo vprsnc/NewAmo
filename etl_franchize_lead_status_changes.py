@@ -4,7 +4,7 @@ from datetime import datetime
 from dateutil import parser
 
 from loguru import logger
-from amo.getter import get_entity
+from amo.getter import get_entity, read_entity
 
 from setup import franchize
 from sender import send_entity
@@ -44,9 +44,10 @@ if __name__ == "__main__":
         )
 
         try:
+            records = read_entity(arguments['entity_subtype'], arguments['amo'])
             send_entity(
                 arguments['entity_subtype'],
-                'franchize', if_exists='append'
+                'franchize', records, if_exists='append'
             )
             logger.success("ETL process finished successfully, cleaning up...")
             open(
