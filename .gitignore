@@ -10,4 +10,4 @@ __pycache__
 *.nix
 amo/*
 amo
-last_date_franchize_lead_status_changes.txt
+*.txt
