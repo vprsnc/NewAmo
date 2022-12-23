@@ -37,26 +37,18 @@ if __name__ == "__main__":
         f"Starting {arguments['entity']} ETL process at {datetime.now()}"
     )
 
-    try:
-        get_entity(
-            **arguments, logon_data=franchize,
-            code=(code if code else None)
-        )
+    get_entity(
+        **arguments, logon_data=franchize,
+        code=(code if code else None)
+    )
 
-        try:
-            records = read_entity(['entityt_subtype'], arguments['amo'])
-            send_entity(
-                arguments['entity_subtype'],
-                'franchize', records, if_exists='append'
-            )
-            logger.success("ETL process finished successfully, cleaning up...")
-            open(
-                f"temp_data/{arguments['amo']}_{arguments['entity_subtype']}_tmp.json",
-                "w"
-            ).close()
-
-        except Exception as e:
-            logger.critical(f"Sedning process failure: {e}")
-
-    except Exception as e:
-        logger.critical(f"ETL process failure: {e}")
+    records = tuple(read_entity(['entityt_subtype'], arguments['amo']))
+    send_entity(
+        arguments['entity_subtype'],
+        'franchize', records, if_exists='append'
+    )
+    logger.success("ETL process finished successfully, cleaning up...")
+    open(
+        f"temp_data/{arguments['amo']}_{arguments['entity_subtype']}_tmp.json",
+        "w"
+    ).close()
