@@ -34,7 +34,7 @@ def send_entity(entity, amo, records, if_exists):
     try:
         pd.DataFrame.from_records(
             [i._asdict() for i in records]
-        ).to_gbq(
+        ).drop('custom_fields_values', axis=1).to_gbq(
             f"{amo}_oddjob.dw_amocrm_{entity}", if_exists=if_exists
         )
         return True
