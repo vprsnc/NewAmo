@@ -9,12 +9,12 @@ from loguru import logger
 from amo.getter import get_entity
 from amo.utilities import comprehend_lead_custom_fields
 
-from setup import franchize_test #TODO replace
+from setup import franchize
 from sender import send_entity, read_entity
 from amo.entities import Leads
 
 logger.add(
-     'logs/franchize_lead_status_changes.log', backtrace=True, diagnose=True, level='DEBUG'
+     'logs/franchize_leads.log', backtrace=True, diagnose=True, level='DEBUG'
 )
 
 try:
@@ -35,7 +35,7 @@ if __name__ == "__main__":
     )
 
     get_entity(
-        **arguments, logon_data=franchize_test, #TODO replace!!
+        **arguments, logon_data=franchize,
         code=code if code else None
     )
 
