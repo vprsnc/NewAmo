@@ -34,10 +34,10 @@ if __name__ == "__main__":
         f"Starting {arguments['entity']} ETL process at {datetime.now()}"
     )
 
-    # get_entity(
-    #     **arguments, logon_data=franchize,
-    #     code=code if code else None
-    # )
+    get_entity(
+        **arguments, logon_data=franchize,
+        code=code if code else None
+    )
 
     tleads = read_entity(arguments['entity'], arguments['amo'])
     nleads = tuple(comprehend_lead_custom_fields(lead) for lead in tleads)
