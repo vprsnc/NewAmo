@@ -4,10 +4,10 @@ from datetime import datetime
 from dateutil import parser
 
 from loguru import logger
-from amo.getter import get_entity, read_entity
+from amo.getter import get_entity
 
 from setup import franchize
-from sender import send_entity
+from sender import send_entity, read_entity
 
 logger.add(
      'logs/franchize_calls.log', backtrace=True, diagnose=True, level='DEBUG'
