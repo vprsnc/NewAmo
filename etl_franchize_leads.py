@@ -41,12 +41,15 @@ if __name__ == "__main__":
 
     tleads = read_entity(arguments['entity'], arguments['amo'])
     nleads = tuple(comprehend_lead_custom_fields(lead) for lead in tleads)
-    send_entity(
-        arguments['entity'],
-        'franchize', nleads, if_exists='replace'
-    )
-    logger.success("ETL process finished successfully, cleaning up...")
-    open(
-        f"temp_data/{arguments['amo']}_{arguments['entity']}_tmp.json",
-        "w"
-    ).close()
+    try:
+        send_entity(
+            arguments['entity'],
+            'franchize', nleads, if_exists='replace'
+        )
+        logger.success("ETL process finished successfully, cleaning up...")
+        open(
+            f"temp_data/{arguments['amo']}_{arguments['entity']}_tmp.json",
+            "w"
+        ).close()
+    except Exception as e:
+        logger.critical(e)
