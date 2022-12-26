@@ -24,10 +24,10 @@ except KeyError:
     code = None
 
 arguments = {
-    'entity': "events",
+    'entity': "leads",
     'amo':  'franchize',
-    'filters': f'?filter[type]=incoming_call,outgoing_call&filter[created_at][from]={last_date}',
-    'entity_subtype': 'calls'
+    'filters': f'?notes/filter[type]=call_in', #TODO &filter[created_at][from]={last_date}',
+    'entity_subtype': 'notes'
     }
 
 
