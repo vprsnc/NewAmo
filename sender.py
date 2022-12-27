@@ -31,10 +31,13 @@ def send_entity(entity, amo, records, if_exists):
     """Function uses basic functionality of bigquery python
         library to send JSON to a database.
        If_exists takes following arguments: 'replace', 'append'"""
+    df = pd.DataFrame.from_records(
+        [i._asdict() for i in records]
+    )
+    if 'custom_fields_values' in df.columns:
+        df.drop('custom_fields_values', axis=1, inplace=True)
     try:
-        pd.DataFrame.from_records(
-            [i._asdict() for i in records]
-        ).to_gbq(
+        df.to_gbq(
             f"{amo}_oddjob.dw_amocrm_{entity}", if_exists=if_exists
         )
         return True
