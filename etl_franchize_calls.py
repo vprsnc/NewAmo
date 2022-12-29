@@ -42,13 +42,13 @@ if __name__ == "__main__":
         code=(code if code else None)
     )
 
-    records = tuple(read_entity(arguments['entity_subtype'], arguments['amo']))
-    send_entity(
-        arguments['entity_subtype'],
-        'franchize', records, if_exists='append'
-    )
-    logger.success("ETL process finished successfully, cleaning up...")
-    open(
-        f"temp_data/{arguments['amo']}_{arguments['entity_subtype']}_tmp.json",
-        "w"
-    ).close()
+    # records = tuple(read_entity(arguments['entity_subtype'], arguments['amo']))
+    # send_entity(
+    #     arguments['entity_subtype'],
+    #     'franchize', records, if_exists='append'
+    # )
+    # logger.success("ETL process finished successfully, cleaning up...")
+    # open(
+    #     f"temp_data/{arguments['amo']}_{arguments['entity_subtype']}_tmp.json",
+    #     "w"
+    # ).close()
