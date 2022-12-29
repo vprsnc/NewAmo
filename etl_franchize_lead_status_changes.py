@@ -46,7 +46,7 @@ if __name__ == "__main__":
     try:
         send_entity(
             arguments['entity_subtype'],
-            'franchize', records, if_exists='append'
+            'franchize', records, if_exists='replace' #TODO Append
         )
         logger.success("ETL process finished successfully, cleaning up...")
         open(
