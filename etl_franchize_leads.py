@@ -51,7 +51,6 @@ if __name__ == "__main__":
         logger.critical(f'reading falied with: {e}')
 
     try:
-        @timer_decorator
         send_entity(
             arguments['entity'],
             'franchize', nleads, if_exists='replace'
