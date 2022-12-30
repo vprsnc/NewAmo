@@ -5,13 +5,14 @@ from loguru import logger
 from google.cloud import bigquery as bq
 
 from amo.builders import *
-from amo.utilities import read_json
+from amo.utilities import read_json, timer_decorator
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = \
     './tokens/oddjob-db-2007-759fe782b144.json'
 client = bq.Client()
 
 
+@timer_decorator
 def read_entity(entity, amo):
     """Function a tuple of named tuples defined per entity in builders.py"""
     entity_file = open(
@@ -27,6 +28,7 @@ def read_entity(entity, amo):
     )
 
 
+@timer_decorator
 def send_entity(entity, amo, records, if_exists):
     """Function uses basic functionality of bigquery python
         library to send JSON to a database.
