@@ -34,13 +34,21 @@ if __name__ == "__main__":
         f"Starting {arguments['entity']} ETL process at {datetime.now()}"
     )
 
-    get_entity(
-        **arguments, logon_data=franchize,
-        code=code if code else None
-    )
+    try:
+        get_entity(
+            **arguments, logon_data=franchize,
+            code=code if code else None
+        )
+    except Exception as e:
+        logger.critical(f'getting falied with: {e}')
 
-    tleads = read_entity(arguments['entity'], arguments['amo'])
-    nleads = tuple(comprehend_lead_custom_fields(lead) for lead in tleads)
+
+    try:
+        tleads = read_entity(arguments['entity'], arguments['amo'])
+        nleads = tuple(comprehend_lead_custom_fields(lead) for lead in tleads)
+    except Exception as e:
+        logger.critical(f'reading falied with: {e}')
+
     try:
         send_entity(
             arguments['entity'],
@@ -52,4 +60,4 @@ if __name__ == "__main__":
             "w"
         ).close()
     except Exception as e:
-        logger.critical(e)
+        logger.critical(f'sending falied with: {e}')

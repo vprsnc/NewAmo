@@ -37,12 +37,19 @@ if __name__ == "__main__":
         f"Starting {arguments['entity']} ETL process at {datetime.now()}"
     )
 
-    get_entity(
-        **arguments, logon_data=franchize,
-        code=(code if code else None)
-    )
+    try:
+        get_entity(
+            **arguments, logon_data=franchize,
+            code=(code if code else None)
+        )
+    except Exception as e:
+        logger.critical(f'getting falied with: {e}')
 
-    records = tuple(read_entity(arguments['entity_subtype'], arguments['amo']))
+    try:
+        records = tuple(read_entity(arguments['entity_subtype'], arguments['amo']))
+    except Exception as e:
+        logger.critical(f'reading falied with: {e}')
+
     try:
         send_entity(
             arguments['entity_subtype'],
@@ -54,4 +61,4 @@ if __name__ == "__main__":
             "w"
         ).close()
     except Exception as e:
-        logger.critical(e)
+        logger.critical(f'sending faliend with {e}')
