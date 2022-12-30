@@ -45,7 +45,6 @@ if __name__ == "__main__":
 
 
     try:
-        @timer_decorator
         tleads = read_entity(arguments['entity'], arguments['amo'])
         nleads = tuple(comprehend_lead_custom_fields(lead) for lead in tleads)
     except Exception as e:
