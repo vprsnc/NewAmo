@@ -34,31 +34,29 @@ if __name__ == "__main__":
         f"Starting {arguments['entity']} ETL process at {datetime.now()}"
     )
 
-    # try:
-    #     @timer_decorator
-    #     get_entity(
-    #         **arguments, logon_data=franchize,
-    #         code=code if code else None
-    #     )
-    # except Exception as e:
-    #     logger.critical(f'getting falied with: {e}')
+    try:
+        @timer_decorator
+        get_entity(
+            **arguments, logon_data=franchize,
+            code=code if code else None
+        )
+    except Exception as e:
+        logger.critical(f'getting falied with: {e}')
 
 
     try:
         tleads = read_entity(arguments['entity'], arguments['amo'])
-        nleads = tuple(comprehend_lead_custom_fields(lead) for lead in tleads)
-    except Exception as e:
-        logger.critical(f'reading falied with: {e}')
-
-    try:
-        send_entity(
-            arguments['entity'],
-            'franchize', nleads, if_exists='replace'
-        )
+        for lead in tleads:
+            nlead = tuple(comprehend_lead_custom_fields(lead))
+            send_entity(
+                arguments['entity'],
+                'franchize', nlead, if_exists='append'
+            )
         logger.success("ETL process finished successfully, cleaning up...")
         open(
             f"temp_data/{arguments['amo']}_{arguments['entity']}_tmp.json",
             "w"
         ).close()
+
     except Exception as e:
-        logger.critical(f'sending falied with: {e}')
+        logger.critical(f'ETL falied with: {e}')
