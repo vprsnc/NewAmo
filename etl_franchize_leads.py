@@ -48,7 +48,7 @@ if __name__ == "__main__":
     )
 
     # Transform:
-    transfrom_entity('leads', 'franchize')
+    transform_entity('leads', 'franchize')
 
     # Load:
     send_entity(
