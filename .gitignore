@@ -11,3 +11,4 @@ __pycache__
 amo/*
 amo
 *.txt
+temp_data
