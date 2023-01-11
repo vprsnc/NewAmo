@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 import csv
-from functools import reduce
+
+import ijson
 
 from amo.builders import *
 from amo.utilities import timer_decorator, read_json, \
@@ -15,37 +16,39 @@ from amo.utilities import timer_decorator, read_json, \
 
 @timer_decorator
 def transform_entity(entity, amo):
-    entity_file = open(
-        f'temp_data/{amo}_{entity}_tmp.json', 'r',
-        encoding='utf-8'
-    )
-
-    read_file = read_json(entity_file)
 
     build_entity = 'build_' + entity + '_tuple'
 
-    with open(f'temp_data/{amo}_{entity}.csv', 'w', newline='') as f:
-        # Create a CSV DictWriter
+    builder = globals()[build_entity]
 
-        builder = globals()[build_entity]
+    with open(
+        f'temp_data/{amo}_{entity}_tmp.json', 'r',
+        encoding='utf-8'
+    ) as entity_file:
 
-        fields = builder(read_file[0])._fields # Initial fields we put
+        # First, we create a header for our csv:
+        first_entry = next(ijson.items(entity_file, 'item'))
 
-        writer = csv.DictWriter(f, fieldnames=fields)
-        writer.writeheader() # write the initial fields
+        fields = comprehend_lead_custom_fields(builder(first_entry))._fields
 
-        for entry in read_file:
+        with open(f'temp_data/{amo}_{entity}.csv', 'w', newline='') as f:
+            # Create a CSV DictWriter
 
-            # First build the named tuple:
-            built = builder(entry)
+            writer = csv.DictWriter(f, fieldnames=fields)
+            writer.writeheader() # write the initial fields
 
-            # Now extract the custom fields:
-            comprehended = comprehend_lead_custom_fields(built)
+            for entry in ijson.items(entity_file, 'item'):
 
-            # Check if the fields in new tuple are different
-            # from original tuple:
-            if fields != comprehended._fields:
-                fields = comprehended._fields
-                writer.fieldnames = fields
-                # Write the data row
-            writer.writerow(comprehended._asdict())
+                # First build the named tuple:
+                built = builder(entry)
+
+                # Now extract the custom fields:
+                comprehended = comprehend_lead_custom_fields(built)
+
+                # Check if the fields in new tuple are different
+                # from original tuple:
+                if fields != comprehended._fields:
+                    fields = comprehended._fields
+                    writer.fieldnames = fields
+                    # Write the data row
+                writer.writerow(comprehended._asdict())
